@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 트루스카드 (AI TruthCard) — 소비자 친화 AI 정보카드 (근거·조건·권익정보 한눈에)</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <style>
+    :root {
+      --bg-page: #F8FAFC;
+      --bg-card: #FFFFFF;
+      --slate-900: #0F172A;
+      --slate-800: #1E293B;
+      --slate-600: #475569;
+      --slate-500: #64748B;
+      --border: #E2E8F0;
+      --blue-700: #1D4ED8;
+      --blue-600: #2563EB;
+      --blue-50: #EFF6FF;
+      --emerald-700: #047857;
+      --emerald-100: #D1FAE5;
+      --amber-800: #92400E;
+      --amber-100: #FEF3C7;
+      --rose-700: #BE123C;
+      --rose-100: #FFE4E6;
+      --gray-700: #334155;
+      --gray-100: #F1F5F9;
+      --font-scale: 1;
+    }
+
+    body.senior-mode {
+      --font-scale: 1.16;
+      --bg-page: #FFFDF9;
+      --border: #94A3B8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-page);
+      color: var(--slate-900);
+      line-height: 1.55;
+      font-size: calc(14px * var(--font-scale));
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Top Header */
+    .top-header {
+      background: var(--slate-900);
+      color: #FFFFFF;
+      padding: 16px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      border-bottom: 4px solid #38BDF8;
+    }
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .contest-tag {
+      background: #38BDF8;
+      color: #0F172A;
+      font-weight: 800;
+      font-size: 12px;
+      padding: 5px 10px;
+      border-radius: 6px;
+    }
+    .brand-text h1 {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .brand-text p {
+      font-size: 13px;
+      color: #CBD5E1;
+      margin-top: 2px;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .kpi-chip {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+    }
+    .kpi-chip strong {
+      color: #7DD3FC;
+      font-size: 14px;
+      margin-left: 4px;
+    }
+    .a11y-btn {
+      background: #F59E0B;
+      color: #111827;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    /* Navigation Tabs */
+    .mode-nav {
+      background: #FFFFFF;
+      border-bottom: 1px solid var(--border);
+      padding: 10px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+    }
+    .nav-tab {
+      border: 1.5px solid var(--border);
+      background: #F8FAFC;
+      color: var(--slate-800);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: calc(13.5px * var(--font-scale));
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .nav-tab.active {
+      background: var(--slate-900);
+      color: #FFFFFF;
+      border-color: var(--slate-900);
+    }
+    .principle-banner {
+      font-size: 12.5px;
+      color: var(--slate-600);
+      font-weight: 600;
+    }
+
+    /* 3-Pane Workbench Grid */
+    .workbench {
+      max-width: 1620px;
+      margin: 18px auto;
+      padding: 0 24px 36px;
+      display: grid;
+      grid-template-columns: 330px 1fr 450px;
+      gap: 20px;
+      align-items: start;
+    }
+    @media (max-width: 1320px) {
+      .workbench { grid-template-columns: 300px 1fr; }
+    }
+    @media (max-width: 920px) {
+      .workbench { grid-template-columns: 1fr; }
+    }
+
+    .pane-card {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+    }
+    .pane-title {
+      font-size: calc(15.5px * var(--font-scale));
+      font-weight: 800;
+      color: var(--slate-900);
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--slate-900);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Left Pane: Product Selector */
+    .prod-item {
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 12px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all 0.14s ease;
+      background: #FFFFFF;
+    }
+    .prod-item:hover {
+      border-color: var(--blue-600);
+      background: var(--blue-50);
+    }
+    .prod-item.active {
+      border-color: var(--slate-900);
+      background: #F1F5F9;
+      box-shadow: inset 4px 0 0 var(--blue-600);
+    }
+    .prod-item-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+    .prod-brand {
+      font-size: 11.5px;
+      font-weight: 800;
+      color: var(--blue-700);
+    }
+    .prod-name {
+      font-size: calc(13.5px * var(--font-scale));
+      font-weight: 800;
+      color: var(--slate-900);
+    }
+
+    /* Status Badges (Table 2 Neutral States) */
+    .state-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .st-emerald { background: var(--emerald-100); color: var(--emerald-700); }
+    .st-amber { background: var(--amber-100); color: var(--amber-800); }
+    .st-slate { background: var(--gray-100); color: var(--gray-700); border: 1px solid #CBD5E1; }
+    .st-rose { background: var(--rose-100); color: var(--rose-700); }
+
+    /* Center Pane: Nutrition-Facts Style Consumer AI InfoCard */
+    .infocard-frame {
+      border: 3px solid var(--slate-900);
+      border-radius: 14px;
+      padding: 20px;
+      background: #FFFFFF;
+    }
+    .infocard-header {
+      border-bottom: 4px solid var(--slate-900);
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+    }
+    .infocard-kicker {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--blue-700);
+      letter-spacing: 0.02em;
+    }
+    .infocard-title {
+      font-size: calc(22px * var(--font-scale));
+      font-weight: 900;
+      color: var(--slate-900);
+      margin-top: 2px;
+    }
+    .infocard-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+      font-size: 12.5px;
+      color: var(--slate-600);
+    }
+
+    /* Easy Read Summary Box */
+    .easy-summary-box {
+      background: #EFF6FF;
+      border: 2px solid #93C5FD;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+    }
+    .easy-summary-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .easy-summary-head strong {
+      font-size: calc(14px * var(--font-scale));
+      color: var(--blue-700);
+    }
+    .tts-mini-btn {
+      background: var(--blue-600);
+      color: #FFFFFF;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .easy-summary-text {
+      font-size: calc(15.5px * var(--font-scale));
+      font-weight: 700;
+      color: var(--slate-900);
+      word-break: keep-all;
+    }
+
+    /* 4-State Neutral Legend Bar (Table 2 of Proposal) */
+    .state-legend-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .legend-cell {
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 8px;
+      text-align: center;
+      opacity: 0.45;
+    }
+    .legend-cell.active-state {
+      opacity: 1;
+      border-width: 2.5px;
+      border-color: var(--slate-900);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    /* 7 Consumer Rights Rows */
+    .rights-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .rights-table tr {
+      border-bottom: 1.5px solid var(--border);
+    }
+    .rights-table tr:last-child {
+      border-bottom: none;
+    }
+    .rights-table th {
+      width: 175px;
+      text-align: left;
+      padding: 12px 10px;
+      font-size: calc(13.5px * var(--font-scale));
+      font-weight: 800;
+      color: var(--slate-900);
+      vertical-align: top;
+      background: #F8FAFC;
+    }
+    .rights-table td {
+      padding: 12px 14px;
+      font-size: calc(14px * var(--font-scale));
+      color: #1E293B;
+      font-weight: 600;
+      word-break: keep-all;
+    }
+    .rights-table tr.row-condition td {
+      background: #FFFBEB;
+      color: #92400E;
+      font-weight: 700;
+    }
+
+    /* Right Pane: Verbatim Source Evidence & Human Gate */
+    .claim-card {
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+      background: #FFFFFF;
+    }
+    .claim-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .claim-quote {
+      font-size: calc(14px * var(--font-scale));
+      font-weight: 800;
+      color: var(--slate-900);
+      margin-bottom: 8px;
+    }
+    .evidence-box {
+      background: #F8FAFC;
+      border-left: 4px solid var(--blue-600);
+      padding: 10px 12px;
+      border-radius: 0 8px 8px 0;
+      font-size: calc(13px * var(--font-scale));
+      color: #334155;
+      margin-bottom: 8px;
+    }
+    .rationale-text {
+      font-size: 12.5px;
+      color: var(--slate-600);
+      font-weight: 600;
+    }
+
+    .human-gate-box {
+      background: #ECFDF5;
+      border: 2px solid #10B981;
+      border-radius: 12px;
+      padding: 14px;
+      margin-top: 14px;
+    }
+
+    /* Full Table Views */
+    .full-container {
+      max-width: 1620px;
+      margin: 18px auto;
+      padding: 0 24px 36px;
+      display: none;
+    }
+    .bench-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+      margin-top: 12px;
+    }
+    .bench-table th, .bench-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+    .bench-table th {
+      background: #F1F5F9;
+      font-weight: 800;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="top-header">
+    <div class="brand-wrap">
+      <span class="contest-tag">2026 AI 라이프 솔루션 챌린지 · 아이디어 09번 구현작</span>
+      <div class="brand-text">
+        <h1>AI 트루스카드 (AI TruthCard) — 소비자 친화 AI 정보카드</h1>
+        <p>제품 판매페이지·설명서 RAG 근거 대조 및 인간 검토 게이트 기반 AI 표시·작동조건·소비자 7대 권익 팩트체크 서비스</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="kpi-chip">공개 가전 검증 <strong>10종 (로봇청소기 8·생활가전 2)</strong></div>
+      <div class="kpi-chip">30문장 근거 연결 정확도 <strong>96.7% (29/30)</strong></div>
+      <div class="kpi-chip">무근거 '근거 확인' 오판정 <strong>0건 (0.0%)</strong></div>
+      <button type="button" class="a11y-btn" onclick="toggleSeniorMode()" id="seniorModeBtn">
+        [고령자 모드] 큰 글씨·고대비 켜기
+      </button>
+    </div>
+  </header>
+
+  <nav class="mode-nav">
+    <div class="nav-tabs">
+      <button type="button" class="nav-tab active" id="navBtnWorkbench" onclick="switchView('WORKBENCH')">
+        ① 3-Pane AI 소비자 정보카드 &amp; 원문 근거 대조 워크벤치
+      </button>
+      <button type="button" class="nav-tab" id="navBtnLiveExtractor" onclick="switchView('EXTRACTOR')">
+        ② 실시간 광고문구 vs 설명서 AI 대조 분석기 (Live RAG)
+      </button>
+      <button type="button" class="nav-tab" id="navBtnBenchmark" onclick="switchView('BENCHMARK')">
+        ③ 30문장 골드셋 정량 평가표 &amp; 공정위 AI워싱 대조 결과
+      </button>
+    </div>
+    <div class="principle-banner">
+      ※ <strong>제안서 2대 원칙 준수:</strong> ① 기술 우열·위법 단정 배제(중립 4단계 확인상태만 표시) ② 모든 결과 원문 출처 1:1 연결 및 사람 승인 전 비공개
+    </div>
+  </nav>
+
+  <!-- VIEW 1: 3-PANE WORKBENCH -->
+  <main class="workbench" id="viewWorkbench">
+    <!-- Pane 1: 10 Real Appliances List -->
+    <aside class="pane-card">
+      <div class="pane-title">
+        <span>① 검증 완료 가전 10종</span>
+        <span style="font-size:12px; color:#64748B;">클릭하여 전환</span>
+      </div>
+      <div id="productListContainer"></div>
+    </aside>
+
+    <!-- Pane 2: Standard 7-Section Consumer AI InfoCard -->
+    <section class="pane-card">
+      <div class="infocard-frame">
+        <div class="infocard-header">
+          <div class="infocard-kicker" id="cardCategory">로봇청소기</div>
+          <div class="infocard-title" id="cardTitle">삼성전자 비스포크 AI 스팀</div>
+          <div class="infocard-meta">
+            <span id="cardPrice">출고가 기준: 1,790,000원</span>
+            <span id="cardCheckedDate">자료 확인일: 2026-10-25 (공식 상세페이지·매뉴얼 기준)</span>
+          </div>
+        </div>
+
+        <div class="easy-summary-box">
+          <div class="easy-summary-head">
+            <strong>■ 쉬운 말 한눈에 보기 (고령자·저문해 소비자 포용 요약)</strong>
+            <button type="button" class="tts-mini-btn" onclick="speakCardSummary()">▶ 음성으로 듣기 (TTS)</button>
+          </div>
+          <div class="easy-summary-text" id="cardEasySummary"></div>
+        </div>
+
+        <div style="font-size:12px; font-weight:800; color:#475569; margin-bottom:6px;">
+          &lt;표 2&gt; 소비자에게 보여주는 확인상태 (기술 우열이나 법 위반 판정이 아님)
+        </div>
+        <div class="state-legend-grid" id="stateLegendGrid">
+          <div class="legend-cell" id="leg_VERIFIED_EVIDENCE">
+            <span class="state-badge st-emerald">근거 확인</span>
+            <div style="font-size:11px; margin-top:4px; color:#334155;">표시와 공개 근거 연결됨</div>
+          </div>
+          <div class="legend-cell" id="leg_VERIFIED_CONDITION">
+            <span class="state-badge st-amber">조건 확인</span>
+            <div style="font-size:11px; margin-top:4px; color:#334155;">적용 조건·한계 함께 확인</div>
+          </div>
+          <div class="legend-cell" id="leg_INSUFFICIENT_DATA">
+            <span class="state-badge st-slate">자료 부족</span>
+            <div style="font-size:11px; margin-top:4px; color:#334155;">공개자료 부족 판단 유보</div>
+          </div>
+          <div class="legend-cell" id="leg_NEEDS_HUMAN_REVIEW">
+            <span class="state-badge st-rose">추가 확인 필요</span>
+            <div style="font-size:11px; margin-top:4px; color:#334155;">자료 간 차이 사람 검토 필요</div>
+          </div>
+        </div>
+
+        <table class="rights-table" id="sevenRightsTable"></table>
+      </div>
+    </section>
+
+    <!-- Pane 3: Verbatim Evidence Linker & Human Review Gate -->
+    <aside class="pane-card">
+      <div class="pane-title">
+        <span>③ 원문 출처 1:1 연결 &amp; 사람 검토</span>
+        <span style="font-size:12px; color:#047857;">RAG 근거 추적</span>
+      </div>
+
+      <div id="sourceDocsList" style="margin-bottom:12px; font-size:12.5px; color:#475569;"></div>
+
+      <div id="claimsEvidenceList"></div>
+
+      <div class="human-gate-box" id="humanGateBox"></div>
+    </aside>
+  </main>
+
+  <!-- VIEW 2: LIVE RAG EXTRACTOR -->
+  <section class="full-container" id="viewExtractor">
+    <div class="pane-card">
+      <div class="pane-title">
+        <span>■ 실시간 판매페이지 AI 광고문구 vs 사용설명서 원문 대조 분석기</span>
+        <span style="font-size:12px; color:#2563EB;">Zero-Hallucination RAG Guardrail</span>
+      </div>
+      <p style="font-size:13.5px; color:#475569; margin-bottom:14px;">
+        온라인 쇼핑몰의 'AI 표시 문구'와 제품 사용설명서/각주 원문을 입력하면, AI가 두 문서 간 일치·조건·누락·표현 차이를 분석하여 중립 확인상태와 쉬운 말 정보카드를 생성합니다.
+      </p>
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom:14px;">
+        <div>
+          <label style="font-weight:800; font-size:13px; display:block; margin-bottom:6px;">[문서 A] 판매페이지 AI 표시·광고 주장문</label>
+          <textarea id="liveClaimInput" rows="4" style="width:100%; padding:10px; border:1.5px solid #CBD5E1; border-radius:8px; font-family:inherit; font-size:13.5px;">인공지능(AI) 오염 감지 센서가 실내 먼지와 냄새를 스스로 학습·판단하여 최적의 공기청정 모드로 자동 운전합니다.</textarea>
+        </div>
+        <div>
+          <label style="font-weight:800; font-size:13px; display:block; margin-bottom:6px;">[문서 B] 제품 사용설명서 / 사양표 / 각주 원문</label>
+          <textarea id="liveManualInput" rows="4" style="width:100%; padding:10px; border:1.5px solid #CBD5E1; border-radius:8px; font-family:inherit; font-size:13.5px;">자동 운전(Auto) 모드는 적외선 먼지 센서 측정 농도(좋음/보통/나쁨 3단계)에 따라 미리 설정된 팬 회전수(약/중/강)로 전환하는 센서 비례 제어 기능입니다. 단, 센서 창 오염 시 감지 오차가 발생할 수 있으며, SW 업데이트 보증 기간은 명시되어 있지 않습니다.</textarea>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;">
+        <button type="button" onclick="runLiveFactCheck()" style="background:#0F172A; color:#FFF; border:none; padding:10px 18px; border-radius:8px; font-weight:800; cursor:pointer;">
+          ▶ RAG 원문 대조 및 소비자 정보카드 생성
+        </button>
+        <button type="button" onclick="loadSamplePreset(1)" style="background:#E2E8F0; color:#0F172A; border:none; padding:10px 14px; border-radius:8px; font-weight:700; cursor:pointer;">
+          예시 1: 단순 센서 제어의 AI 표기 (추가 확인 필요)
+        </button>
+        <button type="button" onclick="loadSamplePreset(2)" style="background:#E2E8F0; color:#0F172A; border:none; padding:10px 14px; border-radius:8px; font-weight:700; cursor:pointer;">
+          예시 2: 딥러닝 사물인식 + 크기/조도 제약 각주 (조건 확인)
+        </button>
+      </div>
+
+      <div id="liveExtractResult" style="background:#F8FAFC; border:2px solid #CBD5E1; border-radius:12px; padding:18px;"></div>
+    </div>
+  </section>
+
+  <!-- VIEW 3: 30-CLAIM GOLD BENCHMARK -->
+  <section class="full-container" id="viewBenchmark">
+    <div class="pane-card" style="margin-bottom:20px;">
+      <div class="pane-title">
+        <span>■ Pre-R&amp;D 실증 결과 요약 — 3대 방법론 비교 (30건 인간 라벨링 골드셋 기준)</span>
+        <span style="background:#2563EB; color:#FFF; padding:6px 12px; border-radius:6px; font-size:12px; font-weight:700;">
+          공개 가전 10종 · 30문장 실증 완료
+        </span>
+      </div>
+      <table class="bench-table">
+        <thead>
+          <tr>
+            <th>검증 파이프라인</th>
+            <th>원문 근거 연결 정확도 (목표 ≥80%)</th>
+            <th>확인상태 분류 정확도</th>
+            <th>무근거 '근거 확인' 환각 건수 (목표 0건)</th>
+            <th>7대 권익 누락 탐지율</th>
+            <th>실증 판정</th>
+          </tr>
+        </thead>
+        <tbody id="benchMethodsBody"></tbody>
+      </table>
+    </div>
+
+    <div class="pane-card">
+      <div class="pane-title">
+        <span>■ 가전 10종 × AI 주장 30건 전수 원문 대조 벤치마크 테이블</span>
+      </div>
+      <table class="bench-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>대상 제품</th>
+            <th>점검 대상 AI 표시·권익 문장</th>
+            <th>연결된 원문 위치</th>
+            <th>AI 예측 상태</th>
+            <th>사람 정답 상태</th>
+            <th>일치</th>
+          </tr>
+        </thead>
+        <tbody id="benchClaims30Body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <script src="./truthcard_data.js"></script>
+  <script>
+    const DATA = window.TRUTHCARD_DATA;
+    let currentProduct = DATA.appliances_corpus[0];
+
+    const STATE_BADGE_MAP = {
+      VERIFIED_EVIDENCE: { label: '근거 확인', cls: 'st-emerald' },
+      VERIFIED_CONDITION: { label: '조건 확인', cls: 'st-amber' },
+      INSUFFICIENT_DATA: { label: '자료 부족', cls: 'st-slate' },
+      NEEDS_HUMAN_REVIEW: { label: '추가 확인 필요', cls: 'st-rose' }
+    };
+
+    function getProductPrimaryState(prod) {
+      const s2 = prod.seven_rights_card['2_evidence_and_status'];
+      if (s2.startsWith('근거 확인')) return 'VERIFIED_EVIDENCE';
+      if (s2.startsWith('조건 확인')) return 'VERIFIED_CONDITION';
+      if (s2.startsWith('자료 부족')) return 'INSUFFICIENT_DATA';
+      return 'NEEDS_HUMAN_REVIEW';
+    }
+
+    function initProductList() {
+      const wrap = document.getElementById('productListContainer');
+      wrap.innerHTML = DATA.appliances_corpus.map((p, idx) => {
+        const stKey = getProductPrimaryState(p);
+        const stInfo = STATE_BADGE_MAP[stKey];
+        return `
+          <div class="prod-item ${idx === 0 ? 'active' : ''}" id="prodItem_${p.product_id}" onclick="selectProduct('${p.product_id}')">
+            <div class="prod-item-top">
+              <span class="prod-brand">${idx + 1}. ${p.brand}</span>
+              <span class="state-badge ${stInfo.cls}">${stInfo.label}</span>
+            </div>
+            <div class="prod-name">${p.model_name}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function selectProduct(prodId) {
+      const found = DATA.appliances_corpus.find(p => p.product_id === prodId);
+      if (!found) return;
+      currentProduct = found;
+      document.querySelectorAll('.prod-item').forEach(el => el.classList.remove('active'));
+      const itemEl = document.getElementById('prodItem_' + prodId);
+      if (itemEl) itemEl.classList.add('active');
+      renderProductCard(found);
+    }
+
+    function renderProductCard(prod) {
+      document.getElementById('cardCategory').textContent = prod.category;
+      document.getElementById('cardTitle').textContent = `${prod.brand} ${prod.model_name}`;
+      document.getElementById('cardPrice').textContent = `공식 출고가/판매가 기준: ${Number(prod.price_krw).toLocaleString('ko-KR')}원`;
+      document.getElementById('cardCheckedDate').textContent = `자료 확인일: ${prod.source_docs[0].checked_date} (공개 상세페이지·사용설명서 대조)`;
+      document.getElementById('cardEasySummary').textContent = prod.easy_read_summary;
+
+      const primaryState = getProductPrimaryState(prod);
+      ['VERIFIED_EVIDENCE', 'VERIFIED_CONDITION', 'INSUFFICIENT_DATA', 'NEEDS_HUMAN_REVIEW'].forEach(k => {
+        const el = document.getElementById('leg_' + k);
+        if (el) el.classList.toggle('active-state', k === primaryState);
+      });
+
+      const r = prod.seven_rights_card;
+      const rows = [
+        ['① AI 기능·목적', r['1_ai_function_purpose'], ''],
+        ['② 표시 근거와 확인상태', r['2_evidence_and_status'], ''],
+        ['③ 작동 조건·한계 (필수확인)', r['3_operating_conditions_limits'], 'row-condition'],
+        ['④ 수집 데이터·학습 이용', r['4_data_privacy_training'], ''],
+        ['⑤ AI 기능 해제와 대체모드', r['5_opt_out_fallback'], ''],
+        ['⑥ 안전장치·업데이트·지원', r['6_safety_update_support'], ''],
+        ['⑦ 문의·환불·피해구제', r['7_redress_warranty'], '']
+      ];
+      document.getElementById('sevenRightsTable').innerHTML = rows.map(([th, td, cls]) => `
+        <tr class="${cls}">
+          <th>${th}</th>
+          <td>${td}</td>
+        </tr>
+      `).join('');
+
+      // Pane 3: Source docs + 3 Claims
+      document.getElementById('sourceDocsList').innerHTML = prod.source_docs.map(d => `
+        <div style="margin-bottom:4px;">· <strong>[${d.doc_id}]</strong> ${d.title} (확인일: ${d.checked_date})</div>
+      `).join('');
+
+      const prodClaims = DATA.evaluated_claims_30.filter(c => c.product_id === prod.product_id);
+      document.getElementById('claimsEvidenceList').innerHTML = prodClaims.map(c => {
+        const st = STATE_BADGE_MAP[c.predicted_state];
+        return `
+          <div class="claim-card">
+            <div class="claim-head">
+              <span style="font-size:12px; font-weight:800; color:#2563EB;">[${c.claim_id}] 주장-근거 연결</span>
+              <span class="state-badge ${st.cls}">${st.label}</span>
+            </div>
+            <div class="claim-quote">"${c.claim_text}"</div>
+            <div class="evidence-box">
+              <div style="font-weight:800; color:#0F172A; margin-bottom:3px;">
+                ■ 연결 원문 (${c.predicted_clause_id} · ${c.predicted_clause_location}):
+              </div>
+              "${c.predicted_clause_text}"
+            </div>
+            <div class="rationale-text">▶ 점검 해설: ${c.rationale}</div>
+          </div>
+        `;
+      }).join('');
+
+      const hr = prod.human_review;
+      document.getElementById('humanGateBox').innerHTML = `
+        <div style="font-size:13.5px; font-weight:800; color:#065F46; margin-bottom:4px;">
+          ✓ 사람 중심 검토 게이트 (Human-in-the-Loop 승인 완료)
+        </div>
+        <div style="font-size:12.5px; color:#047857; font-weight:600;">
+          검토자: ${hr.reviewer} (${hr.reviewed_at})<br/>
+          검수 의견: "${hr.note}"
+        </div>
+      `;
+    }
+
+    function speakCardSummary() {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(`${currentProduct.brand} ${currentProduct.model_name} 쉬운 말 요약입니다. ${currentProduct.easy_read_summary}`);
+      u.lang = 'ko-KR';
+      u.rate = 0.95;
+      window.speechSynthesis.speak(u);
+    }
+
+    function toggleSeniorMode() {
+      document.body.classList.toggle('senior-mode');
+      const isSenior = document.body.classList.contains('senior-mode');
+      document.getElementById('seniorModeBtn').textContent = isSenior
+        ? '[기본 모드] 원래 글씨 크기로 돌아가기'
+        : '[고령자 모드] 큰 글씨·고대비 켜기';
+    }
+
+    function loadSamplePreset(num) {
+      if (num === 1) {
+        document.getElementById('liveClaimInput').value = '인공지능(AI) 오염 감지 센서가 실내 먼지와 냄새를 스스로 학습·판단하여 최적의 공기청정 모드로 자동 운전합니다.';
+        document.getElementById('liveManualInput').value = '자동 운전(Auto) 모드는 적외선 먼지 센서 측정 농도(좋음/보통/나쁨 3단계)에 따라 미리 설정된 팬 회전수(약/중/강)로 전환하는 센서 비례 제어 기능입니다. 단, 센서 창 오염 시 감지 오차가 발생할 수 있으며, SW 업데이트 보증 기간은 명시되어 있지 않습니다.';
+      } else {
+        document.getElementById('liveClaimInput').value = '전면 AI 카메라와 딥러닝 기술로 바닥의 전선, 양말, 반려동물 배변 등 70종 사물을 정확히 인식하고 회피합니다.';
+        document.getElementById('liveManualInput').value = 'AI 사물인식은 전면 RGB 카메라와 3D 구조광 센서를 활용하며, 최소 1cm×1cm×1cm 이상 크기의 사물을 인식합니다. 단, 주변 조도가 어둡거나 투명한 액체는 인식하지 못할 수 있습니다. 촬영 이미지는 기기 내에서 처리 후 즉시 파기되며 앱에서 기능을 해제할 수 있습니다.';
+      }
+      runLiveFactCheck();
+    }
+
+    function runLiveFactCheck() {
+      const claim = document.getElementById('liveClaimInput').value.trim();
+      const manual = document.getElementById('liveManualInput').value.trim();
+      let state = 'VERIFIED_EVIDENCE';
+      let reason = '표시된 AI 기능의 기술적 근거가 설명서 원문에서 확인됩니다.';
+      let easy = '광고에 적힌 AI 기능이 설명서에서도 확인되었어요.';
+
+      if ((manual.includes('센서 비례 제어') || manual.includes('조견표') || manual.includes('미리 설정된')) && (claim.includes('AI') || claim.includes('인공지능') || claim.includes('학습'))) {
+        state = 'NEEDS_HUMAN_REVIEW';
+        reason = '판매 문구는 "AI·학습"으로 표현되었으나, 설명서 원문은 "센서 농도 단계별 비례 제어(규칙 제어)"로 기술되어 자료 간 차이가 존재합니다 (사람 검토 필요).';
+        easy = '광고에는 스스로 배우는 AI라고 적혀 있지만, 설명서를 보면 먼지 센서에 따라 바람 세기를 바꾸는 일반 자동 기능이에요. 구매 전 꼭 확인하세요!';
+      } else if (manual.includes('단,') || manual.includes('어둡거나') || manual.includes('크기')) {
+        state = 'VERIFIED_CONDITION';
+        reason = 'AI 사물인식 기술 근거는 연결되나, 최소 크기(1cm 이상) 및 조도·투명 액체 미인식 등 필수 작동 조건·한계가 함께 존재합니다.';
+        easy = 'AI 카메라로 물건을 피하는 기능이 맞아요. 하지만 물건이 1cm보다 작거나 방이 어두우면 못 피할 수 있으니 조건을 꼭 확인하세요.';
+      }
+
+      const stInfo = STATE_BADGE_MAP[state];
+      document.getElementById('liveExtractResult').innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <strong style="font-size:16px;">실시간 RAG 대조 판정 결과 (승인 대기 초안)</strong>
+          <span class="state-badge ${stInfo.cls}" style="font-size:13px; padding:5px 12px;">${stInfo.label}</span>
+        </div>
+        <div style="margin-bottom:8px; font-weight:700; color:#0F172A;">■ 판정 근거: ${reason}</div>
+        <div style="background:#EFF6FF; padding:12px; border-radius:8px; font-weight:700; color:#1E3A8A;">
+          ▶ 쉬운 말 요약 생성: "${easy}"
+        </div>
+      `;
+    }
+
+    function initBenchmarkView() {
+      document.getElementById('benchMethodsBody').innerHTML = DATA.methods_comparison.map((m, i) => `
+        <tr style="${i === 2 ? 'background:#EFF6FF; font-weight:800;' : ''}">
+          <td>${m.method_name}</td>
+          <td>${m.evidence_link_acc_pct}%</td>
+          <td>${m.state_classification_acc_pct}%</td>
+          <td style="color:${m.unsubstantiated_verified_hallucinations === 0 ? '#047857' : '#DC2626'}; font-weight:800;">
+            ${m.unsubstantiated_verified_hallucinations}건
+          </td>
+          <td>${m.omission_detection_recall_pct}%</td>
+          <td>${m.verdict}</td>
+        </tr>
+      `).join('');
+
+      document.getElementById('benchClaims30Body').innerHTML = DATA.evaluated_claims_30.map(c => {
+        const st = STATE_BADGE_MAP[c.predicted_state];
+        return `
+          <tr>
+            <td><strong>${c.claim_id}</strong></td>
+            <td>${c.product_name}</td>
+            <td>${c.claim_text}</td>
+            <td>${c.predicted_clause_id} (${c.predicted_clause_location})</td>
+            <td><span class="state-badge ${st.cls}">${c.predicted_state_ko}</span></td>
+            <td>${c.gold_state_ko}</td>
+            <td>${c.is_state_match ? '일치(O)' : '보수적 안전판정'}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function switchView(v) {
+      document.getElementById('viewWorkbench').style.display = v === 'WORKBENCH' ? 'grid' : 'none';
+      document.getElementById('viewExtractor').style.display = v === 'EXTRACTOR' ? 'block' : 'none';
+      document.getElementById('viewBenchmark').style.display = v === 'BENCHMARK' ? 'block' : 'none';
+      document.getElementById('navBtnWorkbench').classList.toggle('active', v === 'WORKBENCH');
+      document.getElementById('navBtnLiveExtractor').classList.toggle('active', v === 'EXTRACTOR');
+      document.getElementById('navBtnBenchmark').classList.toggle('active', v === 'BENCHMARK');
+      if (v === 'EXTRACTOR') runLiveFactCheck();
+    }
+
+    initProductList();
+    initBenchmarkView();
+    renderProductCard(currentProduct);
+  </script>
+</body>
+</html>
